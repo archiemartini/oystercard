@@ -51,6 +51,19 @@ describe Oystercard do
       expect{ subject.top_up(1) }.to raise_error 'Maximum balance exceeded'
     end    
   end
+
+  describe '#deduct' do
+      it 'checks to see if object responds to top_up' do
+        expect(subject).to respond_to(:deduct).with(1).argument
+      end
+      it 'deducts an amount from the balance' do
+        oyster = Oystercard.new
+        oyster.top_up(100)
+        deduction = 20
+        oyster.deduct(deduction)
+        expect(oyster.balance).to eq(80)
+      end
+    end
 end
 
 # customer, money, a card 
@@ -58,3 +71,7 @@ end
 # oystercard = Oystercard.new /
 # oystercard.top_up(amount)
 # balance += amount 
+
+# In order to pay for my journey
+# As a customer
+# I need my fare deducted from my card
