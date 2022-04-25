@@ -18,12 +18,22 @@ describe Oystercard do
     # it 'capacity is equal to Default Capacity if no argument is given' do
     #   expect(subject.capacity).to eq Airport::DEFAULT_CAPACITY
     # end
+  ##  write tests for in_journey?, touch_in and touch_out
+  
+  
+  # In order to get through the barriers.
+  # As a customer
+  # I need to touch in and out.
   
 
   describe "#intialize" do
     it 'intializes with zero balance' do
       oystercard = Oystercard.new
       expect(oystercard.balance).to eq 0
+    end
+    it 'initializes not in journey state' do
+      oystercard = Oystercard.new
+      expect(oystercard.in_journey?).to eq 'not in use'
     end
   end
   
@@ -64,6 +74,35 @@ describe Oystercard do
         expect(oyster.balance).to eq(80)
       end
     end
+
+    describe '#in_journey?' do
+    it 'can respond to the method in journey' do
+      expect(subject).to respond_to(:in_journey?)
+    end
+    it 'checks the status of the card' do
+    oystercard = Oystercard.new
+    expect(subject.in_journey?).to eq('not in use')
+    end
+  end
+
+    describe '#touch_in' do
+      it 'changes journey state of oystercard' do
+      oystercard = Oystercard.new
+      oystercard.touch_in
+      expect(oystercard.in_journey?).to eq('in use')
+    end
+  end
+
+  describe '#touch_out' do
+    it 'reverts journey state back to default' do
+      oystercard = Oystercard.new
+      oystercard.touch_in
+      oystercard.touch_out
+      expect(oystercard.in_journey?).to eq('not in use')
+    end 
+  end
+
+
 end
 
 # customer, money, a card 
