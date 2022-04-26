@@ -2,6 +2,7 @@ require 'oystercard'
 
 describe Oystercard do
 
+  
   it 'can create an instance of the class' do
     oystercard = Oystercard.new
     expect(oystercard).to be_kind_of(Oystercard)
@@ -64,14 +65,25 @@ describe Oystercard do
   end
 
     describe '#touch_in' do
+      it 'accepts one argument when called' do 
+      expect(subject).to respond_to(:touch_in).with(1).argument
+      end
+
+      let(:station){double :station}
+      it 'stores the entry' do 
+        subject.top_up(10)
+        subject.touch_in(station)
+        expect(subject.entry_station).to eq station
+      end
+
       it 'changes journey state of oystercard' do
       oystercard = Oystercard.new
       oystercard.top_up(10)
-      oystercard.touch_in
+      oystercard.touch_in(station)
       expect(oystercard.in_journey?).to eq(true)
     end
     it 'runs an error if there is no minimum balance' do
-      expect{ subject.touch_in}.to raise_error "Below minimum balance"
+      expect{ subject.touch_in(station)}.to raise_error "Below minimum balance"
     end
   
   end
@@ -80,7 +92,8 @@ describe Oystercard do
     it 'reverts journey state back to default' do
       oystercard = Oystercard.new
       oystercard.top_up(10)
-      oystercard.touch_in 
+      station = "Wapping"
+      oystercard.touch_in(station) 
       oystercard.touch_out
       expect(oystercard.in_journey?).to eq(false)
     end 
