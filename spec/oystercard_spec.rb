@@ -5,26 +5,7 @@ describe Oystercard do
   it 'can create an instance of the class' do
     oystercard = Oystercard.new
     expect(oystercard).to be_kind_of(Oystercard)
-  end
-
-  
-  # it 'fails when maximum balance is exceeded' do
-  #   oyster = Oystercard.new
-  #   maximum = oyster.max_balance
-  #   amount = maximum + 1
-    
-  #   expect { oyster.top_up(amount)}.to raise_error("Exceeds maximum balance of #{maximum}")
-  # end
-    # it 'capacity is equal to Default Capacity if no argument is given' do
-    #   expect(subject.capacity).to eq Airport::DEFAULT_CAPACITY
-    # end
-  ##  write tests for in_journey?, touch_in and touch_out
-  
-  
-  # In order to get through the barriers.
-  # As a customer
-  # I need to touch in and out.
-  
+  end 
 
   describe "#intialize" do
     it 'intializes with zero balance' do
@@ -33,27 +14,25 @@ describe Oystercard do
     end
     it 'initializes not in journey state' do
       oystercard = Oystercard.new
-      expect(oystercard.in_journey?).to eq 'not in use'
+      expect(oystercard.in_journey?).to eq false
     end
   end
-  
+    
   describe '#top_up' do
     it 'checks to see if object responds to top_up' do
       expect(subject).to respond_to(:top_up).with(1).argument
     end
 
     it 'tops up' do
-    oystercard = Oystercard.new
-    amount = 10
-    expect(oystercard.top_up(amount)).to eq(10)
-    end 
-
-    it 'increases the balance by amount' do
-    oystercard = Oystercard.new
-    amount = 10
-    oystercard.top_up(amount)
-    expect(oystercard.balance).to eq(10)
+      expect{ subject.top_up(10) }.to change{ subject.balance }.by(10)
     end
+
+    # it 'increases the balance by amount' do
+    # oystercard = Oystercard.new
+    # amount = 10
+    # oystercard.top_up(amount)
+    # expect(oystercard.balance).to eq(10)
+    # end
 
     it 'raises an error if the maximum balance is exceeded' do
       maximum_balance = Oystercard::MAXIMUM_BALANCE
@@ -63,16 +42,15 @@ describe Oystercard do
   end
 
   describe '#deduct' do
-      it 'checks to see if object responds to top_up' do
-        expect(subject).to respond_to(:deduct).with(1).argument
-      end
-      it 'deducts an amount from the balance' do
-        oyster = Oystercard.new
-        oyster.top_up(100)
-        deduction = 20
-        oyster.deduct(deduction)
-        expect(oyster.balance).to eq(80)
-      end
+      
+    
+    #   it 'deducts an amount from the balance' do
+    #     oyster = Oystercard.new
+    #     oyster.top_up(100)
+    #     deduction = 20
+    #     oyster.deduct(deduction)
+    #     expect(oyster.balance).to eq(80)
+    #   end
     end
 
     describe '#in_journey?' do
@@ -81,25 +59,34 @@ describe Oystercard do
     end
     it 'checks the status of the card' do
     oystercard = Oystercard.new
-    expect(subject.in_journey?).to eq('not in use')
+    expect(subject.in_journey?).to eq(false)
     end
   end
 
     describe '#touch_in' do
       it 'changes journey state of oystercard' do
       oystercard = Oystercard.new
+      oystercard.top_up(10)
       oystercard.touch_in
-      expect(oystercard.in_journey?).to eq('in use')
+      expect(oystercard.in_journey?).to eq(true)
     end
+    it 'runs an error if there is no minimum balance' do
+      expect{ subject.touch_in}.to raise_error "Below minimum balance"
+    end
+  
   end
 
   describe '#touch_out' do
     it 'reverts journey state back to default' do
       oystercard = Oystercard.new
-      oystercard.touch_in
+      oystercard.top_up(10)
+      oystercard.touch_in 
       oystercard.touch_out
-      expect(oystercard.in_journey?).to eq('not in use')
+      expect(oystercard.in_journey?).to eq(false)
     end 
+    it 'calls the deduct method and decreases the balance' do
+      expect{ subject.touch_out }.to change{ subject.balance }.by(-Oystercard::STANDARD_FARE)
+    end
   end
 
 
@@ -114,3 +101,10 @@ end
 # In order to pay for my journey
 # As a customer
 # I need my fare deducted from my card
+
+# let(:station){ double :station }
+
+# it 'stores the entry station' do
+#   subject.touch_in(station)
+#   expect(subject.entry_station).to eq station
+# end

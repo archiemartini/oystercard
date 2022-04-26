@@ -2,35 +2,42 @@
 class Oystercard
   
   MAXIMUM_BALANCE = 100
+  MINIMUM_BALANCE = 1
+  STANDARD_FARE = 2
 
-  attr_reader :balance
-  attr_reader :journey_status
+  attr_reader :balance, :journey_status
 
   def initialize
-    @journey_status = 'not in use'
+    @in_journey_status = false
     @balance = 0
   end 
 
   def in_journey?
-    @journey_status
+    @in_journey_status
   end
 
   def touch_in
-    self.instance_variable_set(:@journey_status, 'in use')
+    fail "Below minimum balance" if @balance < MINIMUM_BALANCE
+    @in_journey_status = true
   end
 
   def touch_out
-    self.instance_variable_set(:@journey_status, 'not in use')
+    @in_journey_status = false
+    deduct(STANDARD_FARE)
   end
 
   def top_up(amount)
     fail "Maximum balance exceeded" if @balance + amount > MAXIMUM_BALANCE 
     @balance += amount
   end
+
+  private
+  
    def deduct(amount)
     @balance -= amount
    end 
-end
+
+  end
 
 # expect{ subject.deduct 3}.to change{ subject.balance }.by -3
 
