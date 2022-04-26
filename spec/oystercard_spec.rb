@@ -17,6 +17,10 @@ describe Oystercard do
       oystercard = Oystercard.new
       expect(oystercard.in_journey?).to eq false
     end
+    it 'intitalizes with an empty journey array' do
+      expect(subject.journeys).to eq []
+    end
+    
   end
     
   describe '#top_up' do
@@ -89,19 +93,38 @@ describe Oystercard do
   end
 
   describe '#touch_out' do
+    let(:entry_station) {double :station}
+    let(:exit_station) {double :station}
+    it 'accepts one argument when called' do 
+      expect(subject).to respond_to(:touch_out).with(1).argument
+      end
     it 'reverts journey state back to default' do
       oystercard = Oystercard.new
       oystercard.top_up(10)
       station = "Wapping"
       oystercard.touch_in(station) 
-      oystercard.touch_out
+      oystercard.touch_out(station)
       expect(oystercard.in_journey?).to eq(false)
     end 
     it 'calls the deduct method and decreases the balance' do
-      expect{ subject.touch_out }.to change{ subject.balance }.by(-Oystercard::STANDARD_FARE)
+      station = "NEw Cross"
+      expect{ subject.touch_out(station) }.to change{ subject.balance }.by(-Oystercard::STANDARD_FARE)
+    end
+    it 'stores exit station' do
+      oyster = Oystercard.new
+      oyster.top_up(10)
+      oyster.touch_in(entry_station)
+      oyster.touch_out(exit_station)
+      expect(oyster.exit_station).to eq exit_station
+    end
+    let(:journey){ {entry_station: entry_station, exit_station: exit_station } }
+    it 'stores a journey' do
+      subject.top_up(10)
+      subject.touch_in(entry_station)
+      subject.touch_out(exit_station)
+      expect(subject.journeys).to include journey
     end
   end
-
 
 end
 
